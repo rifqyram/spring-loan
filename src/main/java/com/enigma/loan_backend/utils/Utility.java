@@ -16,4 +16,14 @@ public class Utility {
         return matcher.matches();
     }
 
+    public static boolean validateDocumentFile(String ext) {
+        String regex = "([^\\s]+(\\.(?i)(jpe?g|png|gif|bmp|pdf))$)";
+
+        Pattern docReg = Pattern.compile(regex);
+        if (ext == null) return false;
+
+        Matcher matcher = docReg.matcher(ext);
+        return matcher.matches();
+    }
+
 }

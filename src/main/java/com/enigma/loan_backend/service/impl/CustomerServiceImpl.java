@@ -1,6 +1,7 @@
 package com.enigma.loan_backend.service.impl;
 
 import com.enigma.loan_backend.entity.Customer;
+import com.enigma.loan_backend.exception.NotFoundException;
 import com.enigma.loan_backend.repository.CustomerRepository;
 import com.enigma.loan_backend.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomerById(String id) {
-        if(customerRepository.existsById(id)) return customerRepository.findById(id).get();
-        else return null;
+        return findCustomerByIdOrThrowNotFound(id);
     }
 
     @Override
@@ -46,4 +46,8 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.save(customer);
     }
 
+
+    private Customer findCustomerByIdOrThrowNotFound(String id) {
+        return customerRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("user with %s not found", id)));
+    }
 }

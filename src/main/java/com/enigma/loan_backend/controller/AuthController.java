@@ -5,27 +5,28 @@ import com.enigma.loan_backend.model.response.CommonResponse;
 import com.enigma.loan_backend.model.response.SignInResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
 import com.enigma.loan_backend.service.AuthService;
+import com.enigma.loan_backend.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
+    private final ValidationUtil validationUtil;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, ValidationUtil validationUtil) {
         this.authService = authService;
+        this.validationUtil = validationUtil;
     }
 
     @PostMapping("/signup")
     public ResponseEntity<CommonResponse<?>> signUp(@RequestBody AuthRequest request) {
+        validationUtil.validate(request);
         UserResponse user = authService.signUp(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -38,6 +39,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<CommonResponse<?>> signIn(@RequestBody AuthRequest request) {
+        validationUtil.validate(request);
         SignInResponse response = authService.signIn(request);
         return ResponseEntity.ok(
                 new CommonResponse<>(

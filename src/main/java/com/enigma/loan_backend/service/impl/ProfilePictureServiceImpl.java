@@ -14,8 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+
+import static com.enigma.loan_backend.constant.Constant.API_GET_AVATAR;
+import static com.enigma.loan_backend.constant.Constant.PATH_FILES_IMAGE;
 
 @Service
 @Transactional
@@ -28,16 +33,16 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
     private final CustomerService customerService;
 
     @Override
-    public ProfilePicture create(String id, MultipartFile multipartFile) {
+    public FileResponse create(String id, MultipartFile multipartFile) {
         boolean validateImage = Utility.validateImageFile(multipartFile.getOriginalFilename());
-        if (!validateImage) throw new RuntimeException(String.format("unsupported of content type %s", multipartFile.getContentType()));
+        if (!validateImage) throw new ConstraintViolationException(String.format("unsupported of content type %s", multipartFile.getContentType()), null);
 
         Customer customer = customerService.getCustomerById(id);
 
         ProfilePicture profilePicture;
 
         if (customer.getProfilePicture() == null) {
-            FileResponse fileResponse = fileService.create(multipartFile, Constant.PATH_FILES_IMAGE);
+            FileResponse fileResponse = fileService.create(multipartFile, PATH_FILES_IMAGE);
             profilePicture = new ProfilePicture(
                     fileResponse.getName(),
                     multipartFile.getContentType(),
@@ -49,9 +54,12 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
 
         ProfilePicture saveProfilePicture = profilePictureRepository.save(profilePicture);
 
+        String url = getAvatarUrl(customer.getId());
+
         customer.setProfilePicture(saveProfilePicture);
         customerService.saveCustomer(customer);
-        return profilePicture;
+
+        return new FileResponse(saveProfilePicture.getName(), url);
     }
 
     @Override
@@ -93,5 +101,9 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
 
     private ProfilePicture findByIdOrThrowNotFound(String id) {
         return profilePictureRepository.findById(id).orElseThrow(() -> new RuntimeException("profile picture not found"));
+    }
+
+    private String getAvatarUrl(String customerId) {
+        return String.format(API_GET_AVATAR, customerId);
     }
 }

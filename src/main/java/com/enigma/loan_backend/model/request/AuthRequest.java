@@ -7,13 +7,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Collections;
 
 @Getter @AllArgsConstructor @NoArgsConstructor
 public class AuthRequest {
 
+    @Email(message = "invalid email")
+    @NotBlank(message = "email cannot be empty")
     private String email;
 
+    @NotBlank(message = "password cannot be empty")
     private String password;
 
     public User toUser(Role role, PasswordEncoder passwordEncoder) {

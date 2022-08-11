@@ -1,10 +1,12 @@
 package com.enigma.loan_backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -37,9 +39,12 @@ public class Customer {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(targetEntity = ProfilePicture.class, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = ProfilePicture.class, orphanRemoval = true)
     @JoinColumn(name = "profile_picture_id", referencedColumnName = "id")
     private ProfilePicture profilePicture;
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = LoanDocument.class, mappedBy = "customer")
+    private List<LoanDocument> loanDocuments;
 
     public Customer(User user) {
         this.user = user;

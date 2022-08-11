@@ -1,9 +1,10 @@
 package com.enigma.loan_backend.controller;
 
 import com.enigma.loan_backend.entity.Customer;
-import com.enigma.loan_backend.entity.ProfilePicture;
 import com.enigma.loan_backend.model.response.CommonResponse;
+import com.enigma.loan_backend.model.response.FileResponse;
 import com.enigma.loan_backend.service.CustomerService;
+import com.enigma.loan_backend.service.LoanDocumentService;
 import com.enigma.loan_backend.service.ProfilePictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -19,11 +20,13 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
     private final ProfilePictureService profilePictureService;
+    private final LoanDocumentService loanDocumentService;
 
     @Autowired
-    public CustomerController(CustomerService customerService, ProfilePictureService profilePictureService) {
+    public CustomerController(CustomerService customerService, ProfilePictureService profilePictureService, LoanDocumentService loanDocumentService) {
         this.customerService = customerService;
         this.profilePictureService = profilePictureService;
+        this.loanDocumentService = loanDocumentService;
     }
 
     @PostMapping("/customers")
@@ -53,7 +56,7 @@ public class CustomerController {
 
     @PostMapping("/customers/{id}/upload/avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable String id, @RequestPart MultipartFile avatar) {
-        ProfilePicture profilePicture = profilePictureService.create(id, avatar);
+        FileResponse profilePicture = profilePictureService.create(id, avatar);
         return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponse<>(
                 HttpStatus.CREATED.value(),
                 HttpStatus.CREATED.name(),
@@ -81,5 +84,40 @@ public class CustomerController {
                         "Successfully delete avatar",
                         null
                 ));
+    }
+
+    @PostMapping("/customers/{customerId}/documents")
+    public ResponseEntity<?> uploadDocument(@PathVariable String customerId, @RequestPart List<MultipartFile> documents) {
+        List<FileResponse> loanDocuments = loanDocumentService.create(customerId, documents);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new CommonResponse<>(
+                        HttpStatus.CREATED.value(),
+                        HttpStatus.CREATED.name(),
+                        "Successfully upload documents",
+                        loanDocuments
+                ));
+    }
+
+    @GetMapping("/customers/{customerId}/myDocuments")
+    public ResponseEntity<?> getDocuments(@PathVariable String customerId) {
+        List<FileResponse> loanDocumentResponses = loanDocumentService.getAll(customerId);
+        return ResponseEntity
+                .ok(new CommonResponse<>(
+                        HttpStatus.OK.value(),
+                        HttpStatus.OK.name(),
+                        "Successfully fetch documents",
+                        loanDocumentResponses
+                ));
+    }
+
+    @GetMapping("/customers/{documentId}/documents")
+    public ResponseEntity<?> readDocument(@PathVariable String documentId) {
+        Resource resource = loanDocumentService.get(documentId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }
