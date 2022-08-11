@@ -39,4 +39,11 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteProfilePicture(String id) {
+        Customer customer = getCustomerById(id);
+        customer.setProfilePicture(null);
+        customerRepository.save(customer);
+    }
+
 }

@@ -1,36 +1,47 @@
 package com.enigma.loan_backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
+@Table(name = "mst_customer")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
+
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name = "customer_id")
     private String id;
+
     private String firstName;
+
     private String lastName;
-    private String email;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
+
     private String phone;
-    private String profilePhoto;
+
     private String status;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne(targetEntity = ProfilePicture.class, orphanRemoval = true)
+    @JoinColumn(name = "profile_picture_id", referencedColumnName = "id")
+    private ProfilePicture profilePicture;
+
+    public Customer(User user) {
+        this.user = user;
+    }
 }

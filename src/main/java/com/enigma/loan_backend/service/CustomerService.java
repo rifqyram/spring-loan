@@ -12,5 +12,6 @@ public interface CustomerService {
     List<Customer> getCustomerList();
     void deleteCustomer(String id);
 
+    void deleteProfilePicture(String id);
 
 }

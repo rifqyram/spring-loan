@@ -13,10 +13,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "trx_loan")
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class LoanTransaction {
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -35,13 +33,13 @@ public class LoanTransaction {
 
     private String guaranteePicture;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
     @JsonIgnoreProperties("loanTransactions")
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "loan_type_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "loan_type_id", referencedColumnName = "loan_type_id")
     @JsonIgnoreProperties("loanTransactions")
-    private Customer loanType;
+    private LoanType loanType;
 }

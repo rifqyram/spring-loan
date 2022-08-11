@@ -36,7 +36,7 @@ public class LoanTypeController {
         return loanTypeService.saveLoanType(loanType);
     }
 
-    @DeleteMapping("/loan-types/id")
+    @DeleteMapping("/loan-types/{id}")
     public void deleteCustomer(@PathVariable String id){
         loanTypeService.deleteLoanType(id);
     }

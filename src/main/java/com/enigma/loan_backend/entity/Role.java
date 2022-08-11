@@ -3,26 +3,25 @@ package com.enigma.loan_backend.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "tbl_loan_type")
-@Getter @Setter @AllArgsConstructor @NoArgsConstructor
-public class LoanType {
+@Table(name = "tbl_role")
+@Getter @AllArgsConstructor @NoArgsConstructor
+public class Role {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name = "loan_type_id")
+    @Column(name = "role_id")
     private String id;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private ERole role;
 
-    @Column(name = "maximum_loan")
-    private Double maxLoan;
-
+    public Role(ERole role) {
+        this.role = role;
+    }
 }
