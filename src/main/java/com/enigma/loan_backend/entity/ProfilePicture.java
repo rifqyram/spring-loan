@@ -10,13 +10,13 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tbl_profile_picture")
+@Table(name = "t_profile_picture")
 @Getter @AllArgsConstructor @NoArgsConstructor
 public class ProfilePicture {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
     private String name;

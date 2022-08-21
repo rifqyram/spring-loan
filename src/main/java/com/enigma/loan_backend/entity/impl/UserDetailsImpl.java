@@ -29,7 +29,6 @@ public class UserDetailsImpl implements UserDetails {
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole().name()))
                 .collect(Collectors.toList());
-
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
@@ -69,9 +68,5 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public User toUser(Role role) {
-        return new User(email, password, Collections.singletonList(role));
     }
 }

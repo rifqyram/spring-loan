@@ -1,6 +1,5 @@
 package com.enigma.loan_backend.service.impl;
 
-import com.enigma.loan_backend.constant.Constant;
 import com.enigma.loan_backend.entity.Customer;
 import com.enigma.loan_backend.entity.ProfilePicture;
 import com.enigma.loan_backend.model.response.FileResponse;
@@ -13,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
 import static com.enigma.loan_backend.constant.Constant.API_GET_AVATAR;
@@ -37,7 +35,7 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
         boolean validateImage = Utility.validateImageFile(multipartFile.getOriginalFilename());
         if (!validateImage) throw new ConstraintViolationException(String.format("unsupported of content type %s", multipartFile.getContentType()), null);
 
-        Customer customer = customerService.getCustomerById(id);
+        Customer customer = customerService.get(id);
 
         ProfilePicture profilePicture;
 
@@ -64,14 +62,14 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
 
     @Override
     public Resource get(String id) {
-        Customer customer = customerService.getCustomerById(id);
+        Customer customer = customerService.get(id);
         ProfilePicture profilePicture = findByIdOrThrowNotFound(customer.getProfilePicture().getId());
         return fileService.get(profilePicture.getUrl(), profilePicture.getName());
     }
 
     @Override
     public ProfilePicture update(String id, MultipartFile multipartFile) {
-        Customer customer = customerService.getCustomerById(id);
+        Customer customer = customerService.get(id);
 
         ProfilePicture profilePicture = findByIdOrThrowNotFound(customer.getProfilePicture().getId());
 
@@ -93,7 +91,7 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
 
     @Override
     public void delete(String id) {
-        Customer customer = customerService.getCustomerById(id);
+        Customer customer = customerService.get(id);
         if (customer.getProfilePicture() == null) throw new RuntimeException("profile picture not found");
         fileService.delete(customer.getProfilePicture().getUrl(), customer.getProfilePicture().getName());
         customerService.deleteProfilePicture(id);

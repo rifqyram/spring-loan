@@ -7,16 +7,20 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_loan_type")
-@Getter @Setter @AllArgsConstructor @NoArgsConstructor
+@Table(name = "t_loan_type")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoanType {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     @Column(name = "loan_type_id")
     private String id;
 

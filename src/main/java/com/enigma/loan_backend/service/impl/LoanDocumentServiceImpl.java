@@ -32,7 +32,7 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
 
     @Override
     public List<FileResponse> create(String customerId, List<MultipartFile> multipartFiles) {
-        Customer customer = customerService.getCustomerById(customerId);
+        Customer customer = customerService.get(customerId);
 
         List<FileResponse> fileResponses = new ArrayList<>();
 
@@ -69,7 +69,7 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
     @Override
     public Resource get(String documentId) {
         LoanDocument loanDocument = findByIdOrThrowNotFound(documentId);
-        return fileService.get(loanDocument.getUrl(), loanDocument.getName());
+        return fileService.get(loanDocument.getPath(), loanDocument.getName());
     }
 
     private LoanDocument findByIdOrThrowNotFound(String documentId) {

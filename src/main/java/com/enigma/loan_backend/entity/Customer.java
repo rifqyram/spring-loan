@@ -20,8 +20,7 @@ public class Customer {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name = "customer_id")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
     private String firstName;
@@ -35,15 +34,16 @@ public class Customer {
 
     private String status;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = ProfilePicture.class, orphanRemoval = true)
-    @JoinColumn(name = "profile_picture_id", referencedColumnName = "id")
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "profile_picture_id")
     private ProfilePicture profilePicture;
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = LoanDocument.class, mappedBy = "customer")
+    @OneToMany(mappedBy = "customer")
+    @JsonIgnoreProperties("customers")
     private List<LoanDocument> loanDocuments;
 
     public Customer(User user) {

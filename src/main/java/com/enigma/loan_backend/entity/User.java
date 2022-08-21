@@ -2,6 +2,7 @@ package com.enigma.loan_backend.entity;
 
 import com.enigma.loan_backend.model.response.SignInResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class User {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     @Column(name = "user_id")
     private String id;
 
@@ -26,7 +27,7 @@ public class User {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tbl_user_role",
+    @JoinTable(name = "t_user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
     private List<Role> roles;
@@ -40,13 +41,5 @@ public class User {
         this.email = email;
         this.password = password;
         this.roles = roles;
-    }
-
-    public UserResponse toUserResponse() {
-        return new UserResponse(email, roles.get(0).getRole().name());
-    }
-
-    public SignInResponse toSignInResponse(String token) {
-        return new SignInResponse(email, roles.get(0).getRole().name(), token);
     }
 }

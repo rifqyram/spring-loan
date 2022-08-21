@@ -10,4 +10,6 @@ public interface AuthService {
 
     SignInResponse signIn(AuthRequest request);
 
+    UserResponse signUpAdmin(AuthRequest request);
+
 }

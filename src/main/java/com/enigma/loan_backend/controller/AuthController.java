@@ -6,6 +6,9 @@ import com.enigma.loan_backend.model.response.SignInResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
 import com.enigma.loan_backend.service.AuthService;
 import com.enigma.loan_backend.utils.ValidationUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -24,6 +28,8 @@ public class AuthController {
         this.validationUtil = validationUtil;
     }
 
+    @Operation(summary = "Register")
+    @SecurityRequirement(name = "Authorization")
     @PostMapping("/signup")
     public ResponseEntity<CommonResponse<?>> signUp(@RequestBody AuthRequest request) {
         validationUtil.validate(request);
@@ -37,6 +43,8 @@ public class AuthController {
                         user));
     }
 
+    @Operation(summary = "Login")
+    @SecurityRequirement(name = "Authorization")
     @PostMapping("/signin")
     public ResponseEntity<CommonResponse<?>> signIn(@RequestBody AuthRequest request) {
         validationUtil.validate(request);
@@ -49,6 +57,18 @@ public class AuthController {
                         response
                 )
         );
+    }
+
+    @PostMapping("/signup/admin")
+    public ResponseEntity<?> signUpAdmin(@RequestBody AuthRequest request) {
+        validationUtil.validate(request);
+        UserResponse user = authService.signUpAdmin(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new CommonResponse<>(
+                        HttpStatus.CREATED.value(),
+                        HttpStatus.CREATED.name(),
+                        "User created successfully",
+                        user));
     }
 
 }

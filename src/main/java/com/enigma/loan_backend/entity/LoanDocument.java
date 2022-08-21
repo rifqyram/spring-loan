@@ -8,7 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tbl_loan_document")
+@Table(name = "t_loan_document")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,14 +16,14 @@ public class LoanDocument {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
     private String name;
 
     private String contentType;
 
-    private String url;
+    private String path;
 
     private long size;
 
@@ -31,10 +31,10 @@ public class LoanDocument {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    public LoanDocument(String name, String contentType, String url, long size, Customer customer) {
+    public LoanDocument(String name, String contentType, String path, long size, Customer customer) {
         this.name = name;
         this.contentType = contentType;
-        this.url = url;
+        this.path = path;
         this.size = size;
         this.customer = customer;
     }

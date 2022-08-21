@@ -1,7 +1,6 @@
 package com.enigma.loan_backend.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.enigma.loan_backend.entity.my_enum.ApprovalStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,36 +9,59 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "trx_loan")
-@Getter @Setter @AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoanTransaction {
+
     @Id
     @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name = "loan_transaction_id")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date transactionDate;
+    @ManyToOne
+    @JoinColumn(name = "loan_type_id")
+    private LoanType loanType;
 
-    private boolean approvalStatus;
+    @ManyToOne
+    @JoinColumn(name = "instalment_type_id")
+    private InstalmentType instalmentType;
 
-    private boolean loanStatus;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     private Double nominal;
 
-    private String guaranteePicture;
+    private Long approvedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
-    @JsonIgnoreProperties("loanTransactions")
-    private Customer customer;
+    private String approvedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "loan_type_id", referencedColumnName = "loan_type_id")
-    @JsonIgnoreProperties("loanTransactions")
-    private LoanType loanType;
+    @Enumerated(EnumType.STRING)
+    private ApprovalStatus approvalStatus;
+
+    @OneToMany(mappedBy = "loanTransaction")
+    @JsonIgnoreProperties("loanTransaction")
+    private List<LoanTransactionDetail> loanTransactionDetails;
+
+    private Long createdAt;
+
+    private Long updatedAt;
+
+    @PrePersist
+    private void onPersist() {
+        if (createdAt == null) createdAt = System.currentTimeMillis();
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        if (updatedAt == null) updatedAt = System.currentTimeMillis();
+    }
+
 }

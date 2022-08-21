@@ -2,6 +2,7 @@ package com.enigma.loan_backend.service.impl;
 
 import com.enigma.loan_backend.entity.User;
 import com.enigma.loan_backend.entity.impl.UserDetailsImpl;
+import com.enigma.loan_backend.entity.my_enum.ERole;
 import com.enigma.loan_backend.exception.NotFoundException;
 import com.enigma.loan_backend.model.response.UserResponse;
 import com.enigma.loan_backend.repository.UserRepository;
@@ -15,23 +16,27 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleService roleService;
 
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleService = roleService;
     }
 
     @Override
     public UserResponse get(String id) {
-        return findByIdOrThrowNotFound(id).toUserResponse();
+        return new UserResponse(findByIdOrThrowNotFound(id));
     }
 
     @Override
     public UserResponse getByToken(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String role = getRole(userDetails);
-        return userDetails.toUser(roleService.getOrSave(role)).toUserResponse();
+        return new UserResponse(userDetails, role);
+    }
+
+    @Override
+    public User findByToken(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return findByIdOrThrowNotFound(userDetails.getId());
     }
 
     private User findByIdOrThrowNotFound(String id) {

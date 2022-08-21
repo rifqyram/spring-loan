@@ -1,7 +1,7 @@
 package com.enigma.loan_backend.service.impl;
 
 import com.enigma.loan_backend.entity.Customer;
-import com.enigma.loan_backend.entity.ERole;
+import com.enigma.loan_backend.entity.my_enum.ERole;
 import com.enigma.loan_backend.entity.Role;
 import com.enigma.loan_backend.entity.User;
 import com.enigma.loan_backend.entity.impl.UserDetailsImpl;
@@ -45,12 +45,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse signUp(AuthRequest request) {
-        Role role = roleService.getOrSave(ERole.CUSTOMER.name());
+        Role role = roleService.getOrSave(ERole.ROLE_CUSTOMER);
         User user = userRepository.save(request.toUser(role, passwordEncoder));
 
         customerService.saveCustomer(new Customer(user));
 
-        return user.toUserResponse();
+        return new UserResponse(user);
     }
 
     @Override
@@ -63,9 +63,16 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtUtils.generateJwtToken(userDetails);
 
         String role = getRole(userDetails);
-        Role roles = roleService.getOrSave(role);
 
-        return userDetails.toUser(roles).toSignInResponse(jwtToken);
+        return new SignInResponse(userDetails, role, jwtToken);
+    }
+
+    @Override
+    public UserResponse signUpAdmin(AuthRequest request) {
+        Role role = roleService.getOrSave(ERole.ROLE_ADMIN);
+        User user = userRepository.save(request.toUser(role, passwordEncoder));
+
+        return new UserResponse(user);
     }
 
     private String getRole(UserDetailsImpl userDetails) {
