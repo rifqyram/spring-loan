@@ -315,11 +315,12 @@ Request :
 
 ```json
 {
-  "firstName": null,
-  "lastName": null,
-  "dateOfBirth": null,
-  "phone": null,
-  "status": null
+  "id": "xxx",
+  "firstName": "rifqi",
+  "lastName": "ramadhan",
+  "dateOfBirth": "0000-01-01",
+  "phone": "087123",
+  "status": 1
 }
 ```
 
