@@ -123,6 +123,16 @@ enum ApprovalStatus {
 }
 ```
 
+```java
+class GuaranteePicture {
+    private String id;
+    private String name;
+    private String contentType;
+    private String path;
+    private long size;
+}
+```
+
 - Loan Transaction Detail
 
 ```java
