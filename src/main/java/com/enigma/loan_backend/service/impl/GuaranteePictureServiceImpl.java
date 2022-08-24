@@ -7,10 +7,13 @@ import com.enigma.loan_backend.model.response.FileResponse;
 import com.enigma.loan_backend.repository.GuaranteePictureRepository;
 import com.enigma.loan_backend.service.FileService;
 import com.enigma.loan_backend.service.GuaranteePictureService;
+import com.enigma.loan_backend.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.ConstraintViolationException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,9 @@ public class GuaranteePictureServiceImpl implements GuaranteePictureService {
     @Override
     public FileResponse create(MultipartFile multipartFile) {
         FileResponse fileResponse = fileService.create(multipartFile, Constant.PATH_FILES_IMAGE);
+
+        boolean validateImage = Utility.validateContentTypeImage(multipartFile.getContentType());
+        if (!validateImage) throw new ConstraintViolationException(String.format("unsupported of content type %s", multipartFile.getContentType()), null);
 
         GuaranteePicture guaranteePicture = new GuaranteePicture(
                 null,

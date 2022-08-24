@@ -1,29 +1,20 @@
 package com.enigma.loan_backend.utils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utility {
 
-    public static boolean validateImageFile(String ext) {
-        String regex = "([^\\s]+(\\.(?i)(jpe?g|png|gif|bmp))$)";
-
-        Pattern imageReg = Pattern.compile(regex);
-
-        if (ext == null) return false;
-
-        Matcher matcher = imageReg.matcher(ext);
-        return matcher.matches();
+    public static boolean validateContentTypeImage(String contentType) {
+        List<String> contentTypes = Arrays.asList("image/jpeg", "image/png");
+        return contentTypes.contains(contentType);
     }
 
-    public static boolean validateDocumentFile(String ext) {
-        String regex = "([^\\s]+(\\.(?i)(jpe?g|png|gif|bmp|pdf))$)";
-
-        Pattern docReg = Pattern.compile(regex);
-        if (ext == null) return false;
-
-        Matcher matcher = docReg.matcher(ext);
-        return matcher.matches();
+    public static boolean validateContentTypeDocument(String contentType) {
+        List<String> contentTypes = Arrays.asList("image/jpeg", "image/png", "application/pdf");
+        return contentTypes.contains(contentType);
     }
 
 }

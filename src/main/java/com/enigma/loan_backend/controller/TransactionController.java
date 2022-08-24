@@ -4,6 +4,7 @@ import com.enigma.loan_backend.entity.LoanTransaction;
 import com.enigma.loan_backend.model.request.LoanTransactionApprovalRequest;
 import com.enigma.loan_backend.model.response.CommonResponse;
 import com.enigma.loan_backend.model.response.PageResponse;
+import com.enigma.loan_backend.model.response.TransactionDetailResponse;
 import com.enigma.loan_backend.model.response.TransactionResponse;
 import com.enigma.loan_backend.service.GuaranteePictureService;
 import com.enigma.loan_backend.service.LoanTransactionService;
@@ -74,13 +75,14 @@ public class TransactionController {
     @SecurityRequirement(name = "Authorization")
     @GetMapping("/details/{detailId}")
     public ResponseEntity<?> getTransactionDetailById(@PathVariable String detailId) {
-        TransactionResponse transactionResponse = loanTransactionService.get(detailId);
+        TransactionDetailResponse transactionDetailResponse = loanTransactionService.
+                get(detailId);
         return ResponseEntity.ok(
                 new CommonResponse<>(
                         HttpStatus.OK.value(),
                         HttpStatus.OK.name(),
                         "Successfully approved transaction",
-                        transactionResponse
+                        transactionDetailResponse
                 ));
     }
 

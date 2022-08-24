@@ -32,7 +32,7 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
 
     @Override
     public FileResponse create(String id, MultipartFile multipartFile) {
-        boolean validateImage = Utility.validateImageFile(multipartFile.getOriginalFilename());
+        boolean validateImage = Utility.validateContentTypeImage(multipartFile.getContentType());
         if (!validateImage) throw new ConstraintViolationException(String.format("unsupported of content type %s", multipartFile.getContentType()), null);
 
         Customer customer = customerService.get(id);

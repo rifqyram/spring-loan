@@ -8,12 +8,15 @@ import com.enigma.loan_backend.service.CustomerService;
 import com.enigma.loan_backend.service.LoanDocumentService;
 import com.enigma.loan_backend.service.ProfilePictureService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -105,15 +108,22 @@ public class CustomerController {
 
     @Operation(summary = "Upload Avatar")
     @SecurityRequirement(name = "Authorization")
-    @PostMapping("/customers/{customerId}/upload/avatar")
-    public ResponseEntity<?> uploadAvatar(@PathVariable String customerId, @RequestPart MultipartFile avatar) {
+    @PostMapping(value = "/customers/{customerId}/upload/avatar" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> uploadAvatar(@PathVariable String customerId,
+                                          @Parameter(
+                                                  description = "Files to be uploaded",
+                                                  content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                                          )
+                                          @RequestPart MultipartFile avatar) {
         FileResponse profilePicture = profilePictureService.create(customerId, avatar);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CommonResponse<>(
-                HttpStatus.CREATED.value(),
-                HttpStatus.CREATED.name(),
-                "Successfully upload avatar",
-                profilePicture
-        ));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(new CommonResponse<>(
+                        HttpStatus.CREATED.value(),
+                        HttpStatus.CREATED.name(),
+                        "Successfully upload avatar",
+                        profilePicture
+                ));
     }
 
     @Operation(summary = "Download Avatar")
@@ -144,8 +154,13 @@ public class CustomerController {
 
     @Operation(summary = "Upload Loan Document")
     @SecurityRequirement(name = "Authorization")
-    @PostMapping("/customers/{customerId}/documents")
-    public ResponseEntity<?> uploadDocument(@PathVariable String customerId, @RequestPart List<MultipartFile> documents) {
+    @PostMapping(value = "/customers/{customerId}/documents", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> uploadDocument(@PathVariable String customerId,
+                                            @Parameter(
+                                                    description = "Files to be uploaded",
+                                                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)  // Won't work without OCTET_STREAM as the mediaType.
+                                            )
+                                            @RequestPart List<MultipartFile> documents) {
         List<FileResponse> loanDocuments = loanDocumentService.create(customerId, documents);
 
         return ResponseEntity

@@ -7,6 +7,7 @@ import com.enigma.loan_backend.entity.my_enum.EInstalmentType;
 import com.enigma.loan_backend.exception.NotAcceptableException;
 import com.enigma.loan_backend.exception.NotFoundException;
 import com.enigma.loan_backend.model.request.LoanTransactionApprovalRequest;
+import com.enigma.loan_backend.model.response.TransactionDetailResponse;
 import com.enigma.loan_backend.model.response.TransactionResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
 import com.enigma.loan_backend.repository.LoanTransactionRepository;
@@ -69,8 +70,8 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
     }
 
     @Override
-    public TransactionResponse get(String id) {
-        return new TransactionResponse(findByIdOrThrowNotFound(id));
+    public TransactionDetailResponse get(String id) {
+        return loanTransactionDetailService.get(id);
     }
 
     @Override

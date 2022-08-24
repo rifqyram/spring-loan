@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service @Transactional
-@Slf4j @RequiredArgsConstructor
+@Service
+@Transactional
+@Slf4j
+@RequiredArgsConstructor
 public class LoanDocumentServiceImpl implements LoanDocumentService {
 
     private final LoanDocumentRepository loanDocumentRepository;
@@ -37,17 +39,12 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
         List<FileResponse> fileResponses = new ArrayList<>();
 
         multipartFiles.forEach(multipartFile -> {
-            boolean validateDocumentFile = Utility.validateDocumentFile(multipartFile.getContentType());
-            if (!validateDocumentFile)
-                throw new ConstraintViolationException(String.format("unsupported content type - %s", multipartFile.getContentType()), null);
+            boolean validationContentType = Utility.validateContentTypeDocument(multipartFile.getContentType());
+            if (!validationContentType) throw new ConstraintViolationException(String.format("unsupported of content type %s", multipartFile.getContentType()), null);
 
             FileResponse fileResponse = fileService.create(multipartFile, Constant.PATH_FILES_DOCUMENT);
 
-            LoanDocument loanDocument = new LoanDocument(fileResponse.getName(),
-                    multipartFile.getContentType(),
-                    fileResponse.getUrl(),
-                    multipartFile.getSize(),
-                    customer);
+            LoanDocument loanDocument = new LoanDocument(fileResponse.getName(), multipartFile.getContentType(), fileResponse.getUrl(), multipartFile.getSize(), customer);
             LoanDocument savedDocument = loanDocumentRepository.save(loanDocument);
 
             String url = String.format(Constant.API_GET_DOCUMENT, savedDocument.getId());
