@@ -58,17 +58,4 @@ public class AuthController {
                 )
         );
     }
-
-    @PostMapping("/signup/admin")
-    public ResponseEntity<?> signUpAdmin(@RequestBody AuthRequest request) {
-        validationUtil.validate(request);
-        UserResponse user = authService.signUpAdmin(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CommonResponse<>(
-                        HttpStatus.CREATED.value(),
-                        HttpStatus.CREATED.name(),
-                        "User created successfully",
-                        user));
-    }
-
 }

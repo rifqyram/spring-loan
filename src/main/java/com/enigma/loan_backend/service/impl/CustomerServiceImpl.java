@@ -2,6 +2,7 @@ package com.enigma.loan_backend.service.impl;
 
 import com.enigma.loan_backend.entity.Customer;
 import com.enigma.loan_backend.entity.User;
+import com.enigma.loan_backend.entity.my_enum.CustomerStatus;
 import com.enigma.loan_backend.exception.NotFoundException;
 import com.enigma.loan_backend.model.response.CustomerResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.enigma.loan_backend.entity.my_enum.CustomerStatus.ACTIVE;
+import static com.enigma.loan_backend.entity.my_enum.CustomerStatus.INACTIVE;
+
 @Service @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
@@ -24,6 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer saveCustomer(Customer customer) {
+        customer.setStatus(ACTIVE);
         return customerRepository.save(customer);
     }
 
@@ -51,7 +56,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(String id) {
-        customerRepository.deleteById(id);
+        Customer customer = get(id);
+        customer.setStatus(INACTIVE);
+        customerRepository.save(customer);
     }
 
     @Override

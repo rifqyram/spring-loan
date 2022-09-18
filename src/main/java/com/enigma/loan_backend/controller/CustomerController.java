@@ -82,7 +82,7 @@ public class CustomerController {
     @Operation(summary = "Update Customer")
     @SecurityRequirement(name = "Authorization")
     @PutMapping("/customers")
-    @PreAuthorize("hasAnyRole('CUSOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
         Customer saveCustomer = customerService.saveCustomer(customer);
         return ResponseEntity.ok(new CommonResponse<>(
@@ -108,16 +108,11 @@ public class CustomerController {
 
     @Operation(summary = "Upload Avatar")
     @SecurityRequirement(name = "Authorization")
-    @PostMapping(value = "/customers/{customerId}/upload/avatar" , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/customers/{customerId}/upload/avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable String customerId,
-                                          @Parameter(
-                                                  description = "Files to be uploaded",
-                                                  content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                                          )
                                           @RequestPart MultipartFile avatar) {
         FileResponse profilePicture = profilePictureService.create(customerId, avatar);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(new CommonResponse<>(
                         HttpStatus.CREATED.value(),
                         HttpStatus.CREATED.name(),

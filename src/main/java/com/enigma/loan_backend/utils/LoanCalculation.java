@@ -10,8 +10,10 @@ public class LoanCalculation {
 
     private Double rates;
 
+    private Integer tenor;
+
     public Double calculate() {
-        return nominal + ((rates / 100) * nominal);
+        return (nominal / tenor) + ((rates / 100) * nominal);
     }
 
 }

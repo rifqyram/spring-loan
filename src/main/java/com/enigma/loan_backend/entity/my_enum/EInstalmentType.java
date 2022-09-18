@@ -3,15 +3,17 @@ package com.enigma.loan_backend.entity.my_enum;
 import com.enigma.loan_backend.exception.NotFoundException;
 
 public enum EInstalmentType {
-    ONE_MONTH(1),
-    THREE_MONTHS(3),
-    SIXTH_MONTHS(6),
-    NINE_MONTHS(9),
-    TWELVE_MONTHS(12);
+    ONE_MONTH("One Month", 1),
+    THREE_MONTHS("Three Months", 3),
+    SIXTH_MONTHS("Sixth Month", 6),
+    NINE_MONTHS("Nine Months", 9),
+    TWELVE_MONTHS("Twelve Months", 12);
 
     private final Integer number;
+    private final String name;
 
-    EInstalmentType(Integer number) {
+    EInstalmentType(String name, Integer number) {
+        this.name = name;
         this.number = number;
     }
 
@@ -22,7 +24,9 @@ public enum EInstalmentType {
         throw new NotFoundException("instalment type not found");
     }
 
-
+    public String getName() {
+        return name;
+    }
 
     public Integer getNumber() {
         return number;

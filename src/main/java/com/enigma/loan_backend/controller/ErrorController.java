@@ -1,5 +1,6 @@
 package com.enigma.loan_backend.controller;
 
+import com.enigma.loan_backend.exception.DataExistException;
 import com.enigma.loan_backend.exception.NotAcceptableException;
 import com.enigma.loan_backend.exception.NotFoundException;
 import com.enigma.loan_backend.model.response.CommonResponse;
@@ -47,6 +48,18 @@ public class ErrorController {
                 null
         );
         return new ResponseEntity<>(webResponse, notFound);
+    }
+
+    @ExceptionHandler(value = {DataExistException.class})
+    public ResponseEntity<Object> handleDataExistException(DataExistException e) {
+        HttpStatus confHttpStatus = HttpStatus.CONFLICT;
+        CommonResponse<String> webResponse = new CommonResponse<>(
+                409,
+                confHttpStatus.name(),
+                e.getMessage(),
+                null
+        );
+        return new ResponseEntity<>(webResponse, confHttpStatus);
     }
 
 }

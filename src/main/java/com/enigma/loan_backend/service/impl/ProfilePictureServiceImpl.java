@@ -57,7 +57,7 @@ public class ProfilePictureServiceImpl implements ProfilePictureService {
         customer.setProfilePicture(saveProfilePicture);
         customerService.saveCustomer(customer);
 
-        return new FileResponse(saveProfilePicture.getName(), url);
+        return new FileResponse(saveProfilePicture.getId(), saveProfilePicture.getName(), url);
     }
 
     @Override

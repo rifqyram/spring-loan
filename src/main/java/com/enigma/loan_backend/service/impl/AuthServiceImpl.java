@@ -5,6 +5,8 @@ import com.enigma.loan_backend.entity.my_enum.ERole;
 import com.enigma.loan_backend.entity.Role;
 import com.enigma.loan_backend.entity.User;
 import com.enigma.loan_backend.entity.impl.UserDetailsImpl;
+import com.enigma.loan_backend.exception.DataExistException;
+import com.enigma.loan_backend.exception.NotAcceptableException;
 import com.enigma.loan_backend.model.request.AuthRequest;
 import com.enigma.loan_backend.model.response.SignInResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
@@ -14,6 +16,7 @@ import com.enigma.loan_backend.service.AuthService;
 import com.enigma.loan_backend.service.CustomerService;
 import com.enigma.loan_backend.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +24,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.PersistenceException;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -45,11 +53,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse signUp(AuthRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new DataExistException("User Already Exist!");
+
         Role role = roleService.getOrSave(ERole.ROLE_CUSTOMER);
-        User user = userRepository.save(request.toUser(role, passwordEncoder));
+        User user = userRepository.save(new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), Collections.singletonList(role)));
 
         customerService.saveCustomer(new Customer(user));
-
         return new UserResponse(user);
     }
 
@@ -70,8 +79,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponse signUpAdmin(AuthRequest request) {
         Role role = roleService.getOrSave(ERole.ROLE_ADMIN);
-        User user = userRepository.save(request.toUser(role, passwordEncoder));
-
+        User user = userRepository.findByEmail(request.getEmail()).orElseGet(() -> userRepository.save(new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), Collections.singletonList(role))));
         return new UserResponse(user);
     }
 
@@ -82,7 +90,6 @@ public class AuthServiceImpl implements AuthService {
         }
         return role;
     }
-
 
 
 }

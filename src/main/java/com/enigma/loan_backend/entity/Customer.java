@@ -1,5 +1,6 @@
 package com.enigma.loan_backend.entity;
 
+import com.enigma.loan_backend.entity.my_enum.CustomerStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -32,7 +33,8 @@ public class Customer {
 
     private String phone;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CustomerStatus status;
 
     @OneToOne
     @JoinColumn(name = "user_id")

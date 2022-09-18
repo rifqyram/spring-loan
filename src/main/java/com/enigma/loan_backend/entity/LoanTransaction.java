@@ -43,6 +43,10 @@ public class LoanTransaction {
 
     private String approvedBy;
 
+    private Long rejectedAt;
+
+    private String rejectedBy;
+
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus;
 

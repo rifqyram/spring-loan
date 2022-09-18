@@ -4,6 +4,8 @@ import com.enigma.loan_backend.constant.Constant;
 import com.enigma.loan_backend.entity.Customer;
 import com.enigma.loan_backend.entity.LoanDocument;
 import com.enigma.loan_backend.entity.ProfilePicture;
+import com.enigma.loan_backend.entity.my_enum.CustomerStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,16 +23,19 @@ public class CustomerResponse {
 
     private String lastName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
 
     private String phone;
 
-    private String status;
+    private CustomerStatus status;
 
-    private String profilePicture;
+    private FileResponse profilePicture;
 
     @JsonIgnoreProperties("customer")
     private List<LoanDocument> loanDocuments;
+
+    private String userId;
 
     public CustomerResponse(Customer customer) {
         this.id = customer.getId();
@@ -39,8 +44,9 @@ public class CustomerResponse {
         this.dateOfBirth = customer.getDateOfBirth();
         this.phone = customer.getPhone();
         this.status = customer.getStatus();
-        this.profilePicture = String.format(Constant.API_GET_AVATAR, customer.getId());
+        this.profilePicture = customer.getProfilePicture() != null ? new FileResponse(customer.getProfilePicture().getId(), customer.getProfilePicture().getName(), String.format(Constant.API_GET_AVATAR, customer.getId())) : null;
         this.loanDocuments = customer.getLoanDocuments();
+        this.userId = customer.getUser().getId();
     }
 
 

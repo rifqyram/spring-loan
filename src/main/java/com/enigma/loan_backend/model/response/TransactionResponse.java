@@ -1,6 +1,8 @@
 package com.enigma.loan_backend.model.response;
 
+import com.enigma.loan_backend.entity.InstalmentType;
 import com.enigma.loan_backend.entity.LoanTransaction;
+import com.enigma.loan_backend.entity.LoanType;
 import com.enigma.loan_backend.entity.my_enum.ApprovalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,11 +18,11 @@ public class TransactionResponse {
 
     private String id;
 
-    private String loanTypeId;
+    private LoanType loanType;
 
-    private String instalmentTypeId;
+    private InstalmentTypeResponse instalmentType;
 
-    private String customerId;
+    private CustomerResponse customer;
 
     private Double nominal;
 
@@ -28,7 +30,7 @@ public class TransactionResponse {
 
     private String approvedBy;
 
-    private ApprovalStatus approvalStatus;
+    private String approvalStatus;
 
     private List<TransactionDetailResponse> transactionDetailResponses;
 
@@ -36,15 +38,21 @@ public class TransactionResponse {
 
     private Long updatedAt;
 
+    private Long rejectedAt;
+
+    private String rejectedBy;
+
     public TransactionResponse(LoanTransaction loanTransaction) {
         this.id = loanTransaction.getId();
-        this.loanTypeId = loanTransaction.getLoanType().getId();
-        this.instalmentTypeId = loanTransaction.getInstalmentType().getId();
-        this.customerId = loanTransaction.getCustomer().getId();
+        this.loanType = loanTransaction.getLoanType();
+        this.instalmentType = new InstalmentTypeResponse(loanTransaction.getInstalmentType().getId(), loanTransaction.getInstalmentType().getInstalmentType().getName());
+        this.customer = new CustomerResponse(loanTransaction.getCustomer());
         this.nominal = loanTransaction.getNominal();
         this.approvedAt = loanTransaction.getApprovedAt();
         this.approvedBy = loanTransaction.getApprovedBy();
-        this.approvalStatus = loanTransaction.getApprovalStatus();
+        this.rejectedBy = loanTransaction.getRejectedBy();
+        this.rejectedAt = loanTransaction.getRejectedAt();
+        this.approvalStatus = loanTransaction.getApprovalStatus().getStatus();
         this.transactionDetailResponses = convertTransactionDetailToResponse(loanTransaction);
         this.createdAt = loanTransaction.getCreatedAt();
         this.updatedAt = loanTransaction.getUpdatedAt();

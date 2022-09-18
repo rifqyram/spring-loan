@@ -22,6 +22,7 @@ public class User {
     @Column(name = "user_id")
     private String id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;

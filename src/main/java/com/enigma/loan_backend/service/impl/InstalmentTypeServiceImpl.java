@@ -3,10 +3,14 @@ package com.enigma.loan_backend.service.impl;
 import com.enigma.loan_backend.entity.InstalmentType;
 import com.enigma.loan_backend.entity.my_enum.EInstalmentType;
 import com.enigma.loan_backend.exception.NotFoundException;
+import com.enigma.loan_backend.model.response.InstalmentTypeResponse;
 import com.enigma.loan_backend.repository.InstalmentTypeRepository;
 import com.enigma.loan_backend.service.InstalmentTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,13 +24,25 @@ public class InstalmentTypeServiceImpl implements InstalmentTypeService {
     }
 
     @Override
-    public InstalmentType get(String id) {
+    public InstalmentTypeResponse get(String id) {
+        InstalmentType instalmentType = findByIdOrThrowNotFound(id);
+        return new InstalmentTypeResponse(instalmentType.getId(), instalmentType.getInstalmentType().getName());
+    }
+
+    @Override
+    public InstalmentType findById(String id) {
         return findByIdOrThrowNotFound(id);
     }
 
     @Override
-    public InstalmentType getByType(EInstalmentType type) {
-        return instalmentTypeRepository.findByInstalmentType(type).orElseThrow(() -> new NotFoundException("instalment type not found"));
+    public InstalmentTypeResponse getByType(EInstalmentType type) {
+        InstalmentType instalmentType = instalmentTypeRepository.findByInstalmentType(type).orElseThrow(() -> new NotFoundException("instalment type not found"));
+        return new InstalmentTypeResponse(instalmentType.getId(), instalmentType.getInstalmentType().getName());
+    }
+
+    @Override
+    public List<InstalmentTypeResponse> getAll() {
+        return instalmentTypeRepository.findAll().stream().map(instalmentType -> new InstalmentTypeResponse(instalmentType.getId(), instalmentType.getInstalmentType().getName())).collect(Collectors.toList());
     }
 
     private InstalmentType findByIdOrThrowNotFound(String id) {

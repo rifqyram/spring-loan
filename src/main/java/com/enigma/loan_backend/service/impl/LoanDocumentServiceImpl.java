@@ -48,7 +48,7 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
             LoanDocument savedDocument = loanDocumentRepository.save(loanDocument);
 
             String url = String.format(Constant.API_GET_DOCUMENT, savedDocument.getId());
-            fileResponses.add(new FileResponse(fileResponse.getName(), url));
+            fileResponses.add(new FileResponse(savedDocument.getId(), fileResponse.getName(), url));
         });
 
         return fileResponses;
@@ -59,7 +59,7 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
         List<LoanDocument> loanDocuments = loanDocumentRepository.findAll();
         return loanDocuments.stream().map(loanDocument -> {
             String url = String.format(Constant.API_GET_DOCUMENT, loanDocument.getId());
-            return new FileResponse(loanDocument.getName(), url);
+            return new FileResponse(loanDocument.getId(), loanDocument.getName(), url);
         }).collect(Collectors.toList());
     }
 

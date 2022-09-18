@@ -21,12 +21,4 @@ public class AuthRequest {
     @NotBlank(message = "password cannot be empty")
     private String password;
 
-    public User toUser(Role role, PasswordEncoder passwordEncoder) {
-        return new User(email, passwordEncoder.encode(password), Collections.singletonList(role));
-    }
-
-    public User toUser(Role role) {
-        return new User(email, password, Collections.singletonList(role));
-    }
-
 }

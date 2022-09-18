@@ -38,7 +38,7 @@ public class FileServiceImpl implements FileService {
 
             log.info("created new file {} - at {}", filename, new Date());
 
-            return new FileResponse(filename, this.path.toUri().getPath());
+            return new FileResponse(null, filename, this.path.toUri().getPath());
         } catch (IOException e) {
             throw new NotAcceptableException(e.getMessage());
         }
@@ -71,7 +71,7 @@ public class FileServiceImpl implements FileService {
         try {
             Files.delete(oldFile);
             Files.copy(multipartFile.getInputStream(), newFile);
-            return new FileResponse(newFilename, this.path.toUri().getPath());
+            return new FileResponse(null, newFilename, this.path.toUri().getPath());
         } catch (IOException e) {
             throw new NotAcceptableException(e.getMessage());
         }

@@ -34,7 +34,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         CommonResponse<Object> commonResponse = new CommonResponse<>(
                 401,
                 HttpStatus.UNAUTHORIZED.name(),
-                "Unauthorized please login",
+                authException.getMessage(),
                 null
         );
 

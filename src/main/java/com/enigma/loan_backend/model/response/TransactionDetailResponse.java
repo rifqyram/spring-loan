@@ -18,7 +18,7 @@ public class TransactionDetailResponse {
 
     private Double nominal;
 
-    private String guaranteePicture;
+    private FileResponse guaranteePicture;
 
     private LoanStatus loanStatus;
 
@@ -30,7 +30,7 @@ public class TransactionDetailResponse {
         this.id = loanTransactionDetail.getId();
         this.transactionDate = loanTransactionDetail.getTransactionDate();
         this.nominal = loanTransactionDetail.getNominal();
-        this.guaranteePicture = getGuaranteePicture(loanTransactionDetail);
+        this.guaranteePicture = loanTransactionDetail.getGuaranteePicture() != null ? new FileResponse(loanTransactionDetail.getGuaranteePicture().getId(), loanTransactionDetail.getGuaranteePicture().getName(), String.format("/transactions/%s/file", loanTransactionDetail.getGuaranteePicture().getId())) : null;
         this.loanStatus = loanTransactionDetail.getLoanStatus();
         this.createdAt = loanTransactionDetail.getCreatedAt();
         this.updatedAt = loanTransactionDetail.getUpdatedAt();

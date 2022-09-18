@@ -39,7 +39,7 @@ public class GuaranteePictureServiceImpl implements GuaranteePictureService {
 
         GuaranteePicture savedGuaranteePicture = guaranteePictureRepository.save(guaranteePicture);
         String url = String.format(Constant.API_GET_GUARANTEE_PIC, savedGuaranteePicture.getId());
-        return new FileResponse(multipartFile.getName(), url);
+        return new FileResponse(savedGuaranteePicture.getId(), multipartFile.getName(), url);
     }
 
     @Override
