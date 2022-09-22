@@ -1,6 +1,7 @@
 package com.enigma.loan_backend.controller;
 
 import com.enigma.loan_backend.entity.Customer;
+import com.enigma.loan_backend.model.request.CustomerUpdateRequest;
 import com.enigma.loan_backend.model.response.CommonResponse;
 import com.enigma.loan_backend.model.response.CustomerResponse;
 import com.enigma.loan_backend.model.response.FileResponse;
@@ -83,8 +84,8 @@ public class CustomerController {
     @SecurityRequirement(name = "Authorization")
     @PutMapping("/customers")
     @PreAuthorize("hasAnyRole('CUSTOMER')")
-    public ResponseEntity<?> updateCustomer(@RequestBody Customer customer) {
-        Customer saveCustomer = customerService.saveCustomer(customer);
+    public ResponseEntity<?> updateCustomer(@RequestBody CustomerUpdateRequest customer) {
+        CustomerResponse saveCustomer = customerService.updateCustomer(customer);
         return ResponseEntity.ok(new CommonResponse<>(
                 HttpStatus.OK.value(),
                 HttpStatus.OK.name(),
@@ -170,9 +171,10 @@ public class CustomerController {
 
     @Operation(summary = "Get All Loan Document")
     @SecurityRequirement(name = "Authorization")
-    @GetMapping("/customers/{customerId}/myDocuments")
-    public ResponseEntity<?> getDocuments(@PathVariable String customerId) {
-        List<FileResponse> loanDocumentResponses = loanDocumentService.getAll(customerId);
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @GetMapping("/customers/documents")
+    public ResponseEntity<?> getDocuments() {
+        List<FileResponse> loanDocumentResponses = loanDocumentService.getAll();
         return ResponseEntity
                 .ok(new CommonResponse<>(
                         HttpStatus.OK.value(),

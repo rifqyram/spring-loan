@@ -1,9 +1,11 @@
 package com.enigma.loan_backend.service.impl;
 
 import com.enigma.loan_backend.entity.LoanType;
+import com.enigma.loan_backend.exception.NotAcceptableException;
 import com.enigma.loan_backend.repository.LoanTypeRepository;
 import com.enigma.loan_backend.service.LoanTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +37,10 @@ public class LoanTypeServiceImpl implements LoanTypeService {
 
     @Override
     public void deleteLoanType(String id) {
-        loanTypeRepository.deleteById(id);
+        try {
+            loanTypeRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new NotAcceptableException("This data have relation on transactions data");
+        }
     }
 }

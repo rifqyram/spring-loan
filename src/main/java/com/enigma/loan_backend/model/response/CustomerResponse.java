@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter @AllArgsConstructor @NoArgsConstructor
 public class CustomerResponse {
@@ -33,7 +34,7 @@ public class CustomerResponse {
     private FileResponse profilePicture;
 
     @JsonIgnoreProperties("customer")
-    private List<LoanDocument> loanDocuments;
+    private List<FileResponse> loanDocuments;
 
     private String userId;
 
@@ -45,8 +46,13 @@ public class CustomerResponse {
         this.phone = customer.getPhone();
         this.status = customer.getStatus();
         this.profilePicture = customer.getProfilePicture() != null ? new FileResponse(customer.getProfilePicture().getId(), customer.getProfilePicture().getName(), String.format(Constant.API_GET_AVATAR, customer.getId())) : null;
-        this.loanDocuments = customer.getLoanDocuments();
+        this.loanDocuments = convertLoanDocumentToFileResponse(customer.getLoanDocuments(), customer.getId());
         this.userId = customer.getUser().getId();
+    }
+
+    private List<FileResponse> convertLoanDocumentToFileResponse(List<LoanDocument> loanDocuments, String customerId) {
+        if (loanDocuments == null) return null;
+        return loanDocuments.stream().map(loanDocument -> new FileResponse(loanDocument.getId(), loanDocument.getName(), String.format("/customers/%s/myDocuments", customerId))).collect(Collectors.toList());
     }
 
 

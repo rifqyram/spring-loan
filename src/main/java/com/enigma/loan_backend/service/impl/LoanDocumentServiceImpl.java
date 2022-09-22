@@ -4,6 +4,7 @@ import com.enigma.loan_backend.constant.Constant;
 import com.enigma.loan_backend.entity.Customer;
 import com.enigma.loan_backend.entity.LoanDocument;
 import com.enigma.loan_backend.exception.NotFoundException;
+import com.enigma.loan_backend.model.response.CustomerResponse;
 import com.enigma.loan_backend.model.response.FileResponse;
 import com.enigma.loan_backend.repository.LoanDocumentRepository;
 import com.enigma.loan_backend.service.CustomerService;
@@ -13,6 +14,7 @@ import com.enigma.loan_backend.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +57,7 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
     }
 
     @Override
-    public List<FileResponse> getAll(String customerId) {
+    public List<FileResponse> getAll() {
         List<LoanDocument> loanDocuments = loanDocumentRepository.findAll();
         return loanDocuments.stream().map(loanDocument -> {
             String url = String.format(Constant.API_GET_DOCUMENT, loanDocument.getId());
@@ -67,6 +69,12 @@ public class LoanDocumentServiceImpl implements LoanDocumentService {
     public Resource get(String documentId) {
         LoanDocument loanDocument = findByIdOrThrowNotFound(documentId);
         return fileService.get(loanDocument.getPath(), loanDocument.getName());
+    }
+
+    @Override
+    public List<LoanDocument> getByCustomerToken(Authentication authentication) {
+        CustomerResponse customerResponse = customerService.getByToken(authentication);
+        return loanDocumentRepository.findAllByCustomerId(customerResponse.getId());
     }
 
     private LoanDocument findByIdOrThrowNotFound(String documentId) {

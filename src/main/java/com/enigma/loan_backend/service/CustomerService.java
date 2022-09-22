@@ -2,6 +2,7 @@ package com.enigma.loan_backend.service;
 
 
 import com.enigma.loan_backend.entity.Customer;
+import com.enigma.loan_backend.model.request.CustomerUpdateRequest;
 import com.enigma.loan_backend.model.response.CustomerResponse;
 import org.springframework.security.core.Authentication;
 
@@ -14,6 +15,9 @@ public interface CustomerService {
     Customer get(String id);
     CustomerResponse getByToken(Authentication authentication);
     List<CustomerResponse> getCustomerList();
+
+    CustomerResponse updateCustomer(CustomerUpdateRequest request);
+
     void deleteCustomer(String id);
     void deleteProfilePicture(String id);
 

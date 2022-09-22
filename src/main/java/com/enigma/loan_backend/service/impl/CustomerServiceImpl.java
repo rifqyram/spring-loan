@@ -4,6 +4,7 @@ import com.enigma.loan_backend.entity.Customer;
 import com.enigma.loan_backend.entity.User;
 import com.enigma.loan_backend.entity.my_enum.CustomerStatus;
 import com.enigma.loan_backend.exception.NotFoundException;
+import com.enigma.loan_backend.model.request.CustomerUpdateRequest;
 import com.enigma.loan_backend.model.response.CustomerResponse;
 import com.enigma.loan_backend.model.response.UserResponse;
 import com.enigma.loan_backend.repository.CustomerRepository;
@@ -52,6 +53,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<CustomerResponse> getCustomerList() {
         return customerRepository.findAll().stream().map(CustomerResponse::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public CustomerResponse updateCustomer(CustomerUpdateRequest request) {
+        Customer customer = get(request.getId());
+        customer.setFirstName(request.getFirstName());
+        customer.setLastName(request.getLastName());
+        customer.setDateOfBirth(request.getDateOfBirth());
+        customer.setPhone(request.getPhone());
+        Customer save = customerRepository.save(customer);
+        return new CustomerResponse(save);
     }
 
     @Override
